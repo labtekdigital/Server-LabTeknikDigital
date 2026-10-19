@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pretest Praktikum Sistem Operasi Judul 1</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Supabase JS Client SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- SheetJS Library untuk Export Excel .xlsx Rapi -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        .bg-mesh {
+            background-color: #0b0f19;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.18) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.2) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.15) 0px, transparent 50%);
+        }
+
+        .neon-border {
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.2);
+        }
+        .neon-border-focus:focus-within {
+            border-color: #818cf8;
+            box-shadow: 0 0 20px 0px rgba(129, 140, 248, 0.35);
+        }
+        .glow-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+            box-shadow: 0 0 25px -3px rgba(139, 92, 246, 0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-btn:hover {
+            box-shadow: 0 0 35px 2px rgba(217, 70, 239, 0.6);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-mesh text-slate-100 min-h-screen flex flex-col selection:bg-fuchsia-500 selection:text-white">
+
+    <!-- Glowing Top Line -->
+    <div class="h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 w-full animate-pulse"></div>
+
+    <!-- Header / Navbar -->
+    <header class="bg-slate-950/70 backdrop-blur-xl border-b border-slate-800/80 sticky top-0 z-40">
+        <div class="max-w-5xl mx-auto px-4 py-3.5 flex justify-between items-center">
+            <div class="flex items-center space-x-3.5">
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-pink-500 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
+                    <div class="relative bg-slate-900 text-white p-2.5 rounded-xl border border-slate-700">
+                        <i data-lucide="terminal" class="w-5 h-5 text-indigo-400"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-indigo-200 text-sm md:text-base leading-tight tracking-wide">
+                        Pretest Praktikum Sistem Operasi Judul 1
+                    </h1>
+                    <p class="text-[11px] text-indigo-300/80 font-medium flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Universitas Lampung
+                    </p>
+                </div>
+            </div>
+            <button onclick="openAdminAuthModal()" class="group relative inline-flex items-center space-x-2 text-xs font-semibold px-4 py-2 rounded-xl bg-slate-900/90 text-slate-200 hover:text-white transition border border-indigo-500/30 hover:border-indigo-400/80 shadow-lg shadow-indigo-950/50">
+                <i data-lucide="shield-check" class="w-4 h-4 text-indigo-400 group-hover:text-pink-400 transition-colors"></i>
+                <span id="navAdminBtnText">Akses Asisten</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-4xl w-full mx-auto p-4 md:p-6 my-2">
+
+        <!-- ==================== VIEW PRAKTIKAN ==================== -->
+        <div id="studentView" class="space-y-6">
+
+            <!-- STEP 1: PENGISIAN IDENTITAS -->
+            <div id="stepIdentity" class="space-y-6">
+                <div class="bg-slate-900/70 rounded-3xl neon-border p-6 md:p-10 backdrop-blur-2xl relative overflow-hidden">
+                    <div class="absolute -top-20 -right-20 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-pink-500/15 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-4">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-pink-400"></i> Pretest CBT Judul 1
+                    </div>
+                    <h2 class="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-indigo-200 mb-3 leading-tight">
+                        DIREKTORI DAN PERINTAH DASAR SISTEM OPERASI LINUX
+                    </h2>
+                    <p class="text-slate-300/90 text-sm mb-8 leading-relaxed max-w-2xl font-normal">
+                        Selamat datang di platform Praktikum Sistem Operasi. Harap mengisikan identitas lengkap Anda sebelum melanjutkan ke soal pretest
+                    </p>
+
+                    <form onsubmit="goToQuestionsStep(event)" class="space-y-6 border-t border-slate-800/80 pt-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="neon-border-focus rounded-2xl transition">
+                                <label class="block text-xs font-bold text-slate-300 mb-2">Nama Lengkap <span class="text-rose-400">*</span></label>
+                                <input type="text" id="studentName" required placeholder="Salsabila Aulia Putri" class="w-full px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition placeholder-slate-600">
+                            </div>
+                            <div class="neon-border-focus rounded-2xl transition">
+                                <label class="block text-xs font-bold text-slate-300 mb-2">NPM <span class="text-rose-400">*</span></label>
+                                <input type="text" id="studentNPM" required placeholder="2415061023" class="w-full px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition placeholder-slate-600">
+                            </div>
+                        </div>
+                        <div class="neon-border-focus rounded-2xl transition">
+                            <label class="block text-xs font-bold text-slate-300 mb-2">Kelas Praktikum <span class="text-rose-400">*</span></label>
+                            <select id="studentClass" required class="w-full px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition">
+                                <option value="" disabled selected>-- Pilih Kelas Praktikum --</option>
+                                <option value="PSO A">PSO A</option>
+                                <option value="PSO B">PSO B</option>
+                                <option value="PSO C">PSO C</option>
+                                <option value="PSO D">PSO D</option>
+                                <option value="PSO E">PSO E</option>
+                            </select>
+                        </div>
+
+                        <div class="pt-4 flex justify-end">
+                            <button type="submit" class="glow-btn w-full md:w-auto px-8 py-3.5 text-white font-bold rounded-2xl transition flex items-center justify-center gap-3 text-sm">
+                                <span>Lanjut ke Soal Pretest</span>
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- STEP 2: LEMBAR SOAL PRETEST -->
+            <div id="stepQuestions" class="hidden space-y-6">
+                <div class="bg-slate-900/80 rounded-2xl border border-indigo-500/30 p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sticky top-16 z-30 shadow-2xl backdrop-blur-xl">
+                    <div>
+                        <div class="text-xs text-indigo-300/80 flex items-center gap-2">
+                            <span id="displayStudentInfo" class="font-bold text-indigo-300"></span>
+                        </div>
+                        <h3 class="text-base font-extrabold text-white mt-0.5">Halaman Pengerjaan Soal Pretest</h3>
+                    </div>
+                    <div class="w-full md:w-auto flex items-center gap-3">
+                        <div class="flex-1 md:w-48 bg-slate-950 h-3 rounded-full overflow-hidden border border-slate-800">
+                            <div id="progressBar" class="bg-gradient-to-r from-indigo-500 to-pink-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                        <span id="progressText" class="text-xs font-black text-indigo-300 whitespace-nowrap bg-indigo-950/60 px-3 py-1 rounded-full border border-indigo-500/30">0 / 15 Terjawab</span>
+                    </div>
+                </div>
+
+                <form id="pretestQuestionsForm" onsubmit="submitPretest(event)" class="space-y-6">
+                    <div id="questionsContainer" class="space-y-5"></div>
+
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4 pt-4 border-t border-slate-800">
+                        <button type="button" onclick="backToIdentityStep()" class="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-2 transition px-4 py-2 rounded-xl bg-slate-900 border border-slate-800">
+                            <i data-lucide="chevron-left" class="w-4 h-4"></i> Edit Identitas
+                        </button>
+                        <button type="submit" id="btnSubmitForm" class="w-full md:w-auto px-9 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-extrabold rounded-2xl shadow-lg shadow-emerald-500/30 transition flex items-center justify-center gap-2.5">
+                            <i data-lucide="check-circle" class="w-5 h-5"></i>
+                            <span id="btnSubmitText">Kirim Jawaban Akhir</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- STEP 3: HALAMAN SUKSES -->
+            <div id="stepSuccess" class="hidden bg-slate-900/80 rounded-3xl neon-border p-8 md:p-12 text-center space-y-6 max-w-2xl mx-auto my-8 backdrop-blur-2xl">
+                <div class="w-24 h-24 bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-emerald-500/20">
+                    <i data-lucide="check-check" class="w-12 h-12"></i>
+                </div>
+                <h3 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-emerald-200 to-teal-400">Jawaban Berhasil Disimpan</h3>
+                <p class="text-slate-300 text-sm leading-relaxed max-w-md mx-auto">
+                    Terima kasih telah menyelesaikan Pretest Praktikum Sistem Operasi. Tanggapan Anda telah tercatat otomatis di cloud database server.
+                </p>
+                <div class="pt-6 border-t border-slate-800/80 text-xs text-amber-300/90 flex items-center justify-center gap-2 bg-amber-500/10 py-3 rounded-xl border border-amber-500/20">
+                    <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i> Silakan konfirmasi ke asisten praktikum yang bertugas.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ==================== VIEW ADMIN (DASHBOARD ASISTEN) ==================== -->
+        <div id="adminView" class="hidden space-y-6">
+            
+            <div class="bg-slate-900/80 rounded-2xl border border-indigo-500/30 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 backdrop-blur-xl">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 text-pink-400"></i> Control Panel Asisten
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Pemantauan hasil pretest real-time dari Supabase</p>
+                </div>
+                <div class="flex flex-wrap gap-2.5">
+                    <button onclick="fetchSupabaseResponses()" class="px-3.5 py-2.5 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh Data
+                    </button>
+                    <button onclick="openChangePinModal()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-2">
+                        <i data-lucide="key-round" class="w-4 h-4 text-amber-400"></i> Ubah Password Admin
+                    </button>
+                    <button onclick="exportCSV()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition flex items-center gap-2 shadow-lg shadow-emerald-950/50">
+                        <i data-lucide="download" class="w-4 h-4"></i> Export Excel (.xlsx)
+                    </button>
+                    <button onclick="clearAllResponses()" class="px-4 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-bold rounded-xl transition flex items-center gap-2">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> Reset Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Overview Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
+                    <p class="text-xs text-slate-400 font-bold">Total Responden</p>
+                    <h3 id="statTotal" class="text-3xl font-black text-white mt-1">0</h3>
+                </div>
+                <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
+                    <p class="text-xs text-slate-400 font-bold">Rata-Rata Nilai</p>
+                    <h3 id="statAverage" class="text-3xl font-black text-indigo-400 mt-1">0 / 100</h3>
+                </div>
+                <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
+                    <p class="text-xs text-slate-400 font-bold">Nilai Tengah (Median)</p>
+                    <h3 id="statMedian" class="text-3xl font-black text-emerald-400 mt-1">0</h3>
+                </div>
+                <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
+                    <p class="text-xs text-slate-400 font-bold">Rentang Nilai</p>
+                    <h3 id="statRange" class="text-3xl font-black text-amber-400 mt-1">0 - 0</h3>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800">
+                    <h3 class="text-xs font-black text-indigo-300 uppercase tracking-wider mb-4">Distribusi Skor Praktikan</h3>
+                    <div class="h-56">
+                        <canvas id="scoreDistChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800">
+                    <h3 class="text-xs font-black text-indigo-300 uppercase tracking-wider mb-4">Sebaran Per Kelas</h3>
+                    <div class="h-56 flex justify-center items-center">
+                        <canvas id="classDistChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Responses -->
+            <div class="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden">
+                <div class="p-4 border-b border-slate-800 font-bold text-white text-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                    <div class="flex items-center gap-3">
+                        <span>Rekapitulasi Nilai & Respon</span>
+                        <!-- Dropdown Filter Kelas -->
+                        <div class="flex items-center gap-1.5 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl">
+                            <i data-lucide="filter" class="w-3.5 h-3.5 text-indigo-400"></i>
+                            <select id="filterClassSelect" onchange="applyClassFilter()" class="bg-transparent text-xs text-indigo-300 font-semibold outline-none cursor-pointer">
+                                <option value="ALL" class="bg-slate-900 text-slate-100">Semua Kelas</option>
+                                <option value="PSO A" class="bg-slate-900 text-slate-100">PSO A</option>
+                                <option value="PSO B" class="bg-slate-900 text-slate-100">PSO B</option>
+                                <option value="PSO C" class="bg-slate-900 text-slate-100">PSO C</option>
+                                <option value="PSO D" class="bg-slate-900 text-slate-100">PSO D</option>
+                                <option value="PSO E" class="bg-slate-900 text-slate-100">PSO E</option>
+                            </select>
+                        </div>
+                    </div>
+                    <span id="syncStatusTag" class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-0.5 rounded-full border border-emerald-500/30">Terhubung Supabase</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-950 text-slate-400 border-b border-slate-800">
+                                <th class="p-3.5">Waktu Submit</th>
+                                <th class="p-3.5">Nama Praktikan</th>
+                                <th class="p-3.5">NPM</th>
+                                <th class="p-3.5">Kelas</th>
+                                <th class="p-3.5">Nilai Akhir</th>
+                                <th class="p-3.5 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="responsesTableBody" class="divide-y divide-slate-800 text-slate-300">
+                            <tr>
+                                <td colspan="6" class="p-4 text-center text-slate-500">Memuat data dari Supabase...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- MODAL 1: AUTH ADMIN -->
+    <div id="modalAuthAdmin" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-indigo-500/30 rounded-3xl p-6 md:p-8 max-w-sm w-full space-y-4 shadow-2xl relative">
+            <button onclick="closeAdminAuthModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="w-14 h-14 bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-indigo-500/20">
+                <i data-lucide="lock" class="w-7 h-7"></i>
+            </div>
+            <div class="text-center">
+                <h3 class="text-xl font-extrabold text-white">Akses Asisten</h3>
+                <p class="text-xs text-slate-400 mt-1">Masukkan password khusus untuk membuka dashboard</p>
+            </div>
+            <form onsubmit="verifyAdminAuth(event)" class="space-y-3 pt-2">
+                <input type="password" id="adminPasswordInput" required placeholder="Masukkan Password" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm text-center font-mono focus:ring-2 focus:ring-indigo-500 outline-none">
+                <button type="submit" class="glow-btn w-full py-3 text-white text-xs font-bold rounded-xl transition">Masuk Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: UBAH PASSWORD ADMIN -->
+    <div id="modalChangePin" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-amber-500/30 rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-2xl relative">
+            <button onclick="closeChangePinModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="key" class="w-4 h-4 text-amber-400"></i> Ubah Password Admin
+            </h3>
+            <form onsubmit="saveNewPin(event)" class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 mb-1">Password Baru</label>
+                    <input type="password" id="newPinInput" required placeholder="Masukkan password baru" class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+                <button type="submit" class="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-xs font-bold rounded-xl transition">Simpan Password Baru</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // ==================== CONFIGURATION SUPABASE ====================
+        const SUPABASE_URL = "https://sbumynggdcsyaspfukdy.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_FlC3dc14UCCj7m6WzEXxRg_XxjHy9bp";
+
+        // Inisialisasi Supabase Client
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Data 15 Soal Pretest (Total 100 Poin)
+        const questionsData = [
+            { id: 1, pts: 7, text: "Saat melakukan troubleshooting pada kernel panic di tahap awal inisiasi sistem, file krusial seperti vmlinuz-, initramfs-, serta peta konfigurasi bootloader umumnya dimuat di bawah hirarki direktori mana?", options: ["/lib", "/etc", "/bin", "/boot"], answer: "/boot" },
+            { id: 2, pts: 7, text: "Direktori manakah yang menyimpan seluruh file konfigurasi sistem secara global dan script inisiasi pada sistem Linux?", options: ["/etc", "/var", "/opt", "/usr"], answer: "/etc" },
+            { id: 3, pts: 7, text: "Direktori yang berisi executable program/binary esensial yang dibutuhkan oleh semua user maupun sistem dalam single-user mode adalah...", options: ["/bin", "/home", "/proc", "/sys"], answer: "/bin" },
+            { id: 4, pts: 7, text: "Di manakah file log sistem seperti auth.log atau syslog disimpan secara dinamis?", options: ["/var/log", "/tmp", "/etc/log", "/dev/log"], answer: "/var/log" },
+            { id: 5, pts: 7, text: "Direktori khusus yang bertindak sebagai home directory bagi superuser/administrator adalah...", options: ["/root", "/home/root", "/usr/root", "/admin"], answer: "/root" },
+            { id: 6, pts: 7, text: "Direktori virtual yang berisi informasi runtime sistem, status proses, dan informasi kernel dalam bentuk pseudo-filesystem adalah...", options: ["/proc", "/dev", "/mnt", "/srv"], answer: "/proc" },
+            { id: 7, pts: 7, text: "Perintah CLI Linux yang digunakan untuk mencetak direktori kerja saat ini (Print Working Directory) adalah...", options: ["pwd", "ls", "cd", "dir"], answer: "pwd" },
+            { id: 8, pts: 7, text: "Perintah untuk membuat struktur direktori beserta sub-direktori induknya sekaligus yang belum ada adalah...", options: ["mkdir -p", "mkdir -r", "mkdir -f", "mkdir -a"], answer: "mkdir -p" },
+            { id: 9, pts: 7, text: "Perintah CLI yang digunakan untuk mencari file/direktori berdasarkan kriteria tertentu dalam hirarki sistem adalah...", options: ["find", "grep", "locate", "whereis"], answer: "find" },
+            { id: 10, pts: 7, text: "Perintah CLI Linux yang berfungsi menyaring atau mencari pola string/teks di dalam file adalah...", options: ["grep", "cat", "find", "sed"], answer: "grep" },
+            { id: 11, pts: 6, text: "Perintah yang digunakan untuk menyalin (copy) file atau direktori di Linux adalah...", options: ["cp", "mv", "copy", "ln"], answer: "cp" },
+            { id: 12, pts: 6, text: "Perintah yang digunakan untuk memindahkan (move) atau mengubah nama (rename) file/direktori adalah...", options: ["mv", "rn", "cp", "move"], answer: "mv" },
+            { id: 13, pts: 6, text: "Perintah untuk menghapus file atau direktori di Linux adalah...", options: ["rm", "del", "remove", "clear"], answer: "rm" },
+            { id: 14, pts: 6, text: "Flag/opsi pada perintah 'ls' yang digunakan untuk menampilkan seluruh file termasuk file tersembunyi (hidden file) adalah...", options: ["ls -a", "ls -l", "ls -h", "ls -r"], answer: "ls -a" },
+            { id: 15, pts: 6, text: "Perintah untuk melihat dokumentasi manual resmi dari sebuah perintah CLI di Linux adalah...", options: ["man", "help", "info", "guide"], answer: "man" }
+        ];
+
+        let isAdminLoggedIn = false;
+        let currentStudent = {};
+        let cachedResponses = [];
+        let filteredResponses = [];
+        let scoreChart = null;
+        let classChart = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+            if (!localStorage.getItem("admin_password")) {
+                localStorage.setItem("admin_password", "asprak2026");
+            }
+        });
+
+        function goToQuestionsStep(e) {
+            e.preventDefault();
+            currentStudent = {
+                name: document.getElementById("studentName").value.trim(),
+                npm: document.getElementById("studentNPM").value.trim(),
+                class: document.getElementById("studentClass").value
+            };
+
+            document.getElementById("displayStudentInfo").textContent = `${currentStudent.name} (${currentStudent.npm}) - ${currentStudent.class}`;
+            document.getElementById("stepIdentity").classList.add("hidden");
+            document.getElementById("stepQuestions").classList.remove("hidden");
+            renderQuestions();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function backToIdentityStep() {
+            document.getElementById("stepQuestions").classList.add("hidden");
+            document.getElementById("stepIdentity").classList.remove("hidden");
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById("questionsContainer");
+            container.innerHTML = questionsData.map((q, idx) => `
+                <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-5 md:p-6 space-y-3 transition hover:border-indigo-500/40">
+                    <h4 class="font-bold text-slate-100 text-sm leading-relaxed">
+                        <span class="text-pink-400 mr-1.5">${idx + 1}.</span> ${q.text}
+                    </h4>
+                    <div class="space-y-2.5 pt-1">
+                        ${q.options.map(opt => `
+                            <label class="flex items-center gap-3 p-3.5 border border-slate-800 rounded-xl cursor-pointer hover:bg-slate-800/80 hover:border-indigo-500/50 transition text-xs font-semibold text-slate-300">
+                                <input type="radio" name="q_${q.id}" value="${opt}" onchange="updateProgress()" class="w-4 h-4 text-pink-500 focus:ring-pink-500 bg-slate-950 border-slate-700">
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+            updateProgress();
+        }
+
+        function updateProgress() {
+            let answered = 0;
+            questionsData.forEach(q => {
+                if (document.querySelector(`input[name="q_${q.id}"]:checked`)) answered++;
+            });
+            const pct = (answered / questionsData.length) * 100;
+            document.getElementById("progressBar").style.width = `${pct}%`;
+            document.getElementById("progressText").textContent = `${answered} / ${questionsData.length} Terjawab`;
+        }
+
+        // Send Data to Supabase Database
+        async function submitPretest(e) {
+            e.preventDefault();
+
+            const btnSubmit = document.getElementById("btnSubmitForm");
+            const btnText = document.getElementById("btnSubmitText");
+            btnSubmit.disabled = true;
+            btnText.textContent = "Mengirim ke Server...";
+
+            let totalScore = 0;
+            questionsData.forEach(q => {
+                const selected = document.querySelector(`input[name="q_${q.id}"]:checked`);
+                if (selected && selected.value === q.answer) totalScore += q.pts;
+            });
+
+            try {
+                const { data, error } = await _supabase
+                    .from('pretest_responses')
+                    .insert([
+                        {
+                            name: currentStudent.name,
+                            npm: currentStudent.npm,
+                            class: currentStudent.class,
+                            score: totalScore
+                        }
+                    ]);
+
+                if (error) throw error;
+
+                document.getElementById("stepQuestions").classList.add("hidden");
+                document.getElementById("stepSuccess").classList.remove("hidden");
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (err) {
+                console.error("Supabase Error:", err);
+                alert("Gagal menyimpan ke server Supabase: " + err.message);
+                btnSubmit.disabled = false;
+                btnText.textContent = "Kirim Jawaban Akhir";
+            }
+        }
+
+        // Fetch Data from Supabase Database
+        async function fetchSupabaseResponses() {
+            try {
+                const { data, error } = await _supabase
+                    .from('pretest_responses')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                cachedResponses = data || [];
+                applyClassFilter();
+            } catch (err) {
+                console.error("Fetch Error:", err);
+                alert("Gagal memuat data dari Supabase: " + err.message);
+            }
+        }
+
+        function applyClassFilter() {
+            const selectedClass = document.getElementById("filterClassSelect").value;
+            if (selectedClass === "ALL") {
+                filteredResponses = [...cachedResponses];
+            } else {
+                filteredResponses = cachedResponses.filter(r => r.class === selectedClass);
+            }
+            updateAdminDashboardUI(filteredResponses);
+        }
+
+        function openAdminAuthModal() {
+            if (isAdminLoggedIn) {
+                toggleAdminView();
+            } else {
+                document.getElementById("modalAuthAdmin").classList.remove("hidden");
+            }
+        }
+
+        function closeAdminAuthModal() {
+            document.getElementById("modalAuthAdmin").classList.add("hidden");
+        }
+
+        function verifyAdminAuth(e) {
+            e.preventDefault();
+            const inputPw = document.getElementById("adminPasswordInput").value;
+            const savedPw = localStorage.getItem("admin_password") || "asprak2026";
+
+            if (inputPw === savedPw) {
+                isAdminLoggedIn = true;
+                closeAdminAuthModal();
+                toggleAdminView();
+            } else {
+                alert("Password Salah!");
+            }
+        }
+
+        function toggleAdminView() {
+            const studentView = document.getElementById("studentView");
+            const adminView = document.getElementById("adminView");
+            const btnText = document.getElementById("navAdminBtnText");
+
+            if (adminView.classList.contains("hidden")) {
+                studentView.classList.add("hidden");
+                adminView.classList.remove("hidden");
+                btnText.textContent = "Halaman Pretest";
+                fetchSupabaseResponses();
+            } else {
+                adminView.classList.add("hidden");
+                studentView.classList.remove("hidden");
+                btnText.textContent = "Akses Asisten";
+            }
+        }
+
+        function openChangePinModal() {
+            document.getElementById("modalChangePin").classList.remove("hidden");
+        }
+
+        function closeChangePinModal() {
+            document.getElementById("modalChangePin").classList.add("hidden");
+        }
+
+        function saveNewPin(e) {
+            e.preventDefault();
+            const newPw = document.getElementById("newPinInput").value.trim();
+            if (newPw.length < 4) {
+                alert("Password minimal 4 karakter!");
+                return;
+            }
+            localStorage.setItem("admin_password", newPw);
+            alert("Password Admin berhasil diperbarui!");
+            closeChangePinModal();
+        }
+
+        function updateAdminDashboardUI(responses) {
+            document.getElementById("statTotal").textContent = responses.length;
+
+            if (responses.length === 0) {
+                document.getElementById("statAverage").textContent = "0 / 100";
+                document.getElementById("statMedian").textContent = "0";
+                document.getElementById("statRange").textContent = "0 - 0";
+                document.getElementById("responsesTableBody").innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">Tidak ada respon data untuk filter kelas ini.</td></tr>`;
+                renderCharts([], {});
+                return;
+            }
+
+            const scores = responses.map(r => r.score).sort((a, b) => a - b);
+            const sum = scores.reduce((a, b) => a + b, 0);
+            const avg = (sum / scores.length).toFixed(1);
+            
+            const mid = Math.floor(scores.length / 2);
+            const median = scores.length % 2 !== 0 ? scores[mid] : ((scores[mid - 1] + scores[mid]) / 2);
+
+            document.getElementById("statAverage").textContent = `${avg} / 100`;
+            document.getElementById("statMedian").textContent = median;
+            document.getElementById("statRange").textContent = `${scores[0]} - ${scores[scores.length - 1]}`;
+
+            document.getElementById("responsesTableBody").innerHTML = responses.map(r => {
+                const dateFormatted = new Date(r.created_at).toLocaleString("id-ID");
+                return `
+                    <tr class="hover:bg-slate-800/60 transition border-b border-slate-800">
+                        <td class="p-3.5 text-slate-400">${dateFormatted}</td>
+                        <td class="p-3.5 font-bold text-white">${r.name}</td>
+                        <td class="p-3.5 text-slate-400 font-mono">${r.npm}</td>
+                        <td class="p-3.5"><span class="px-2.5 py-1 bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 rounded-lg text-[11px] font-bold">${r.class}</span></td>
+                        <td class="p-3.5 font-extrabold ${r.score >= 70 ? 'text-emerald-400' : 'text-rose-400'}">${r.score} / 100</td>
+                        <td class="p-3.5 text-center">
+                            <button onclick="deleteSingleResponse(${r.id})" class="text-slate-500 hover:text-rose-400 transition" title="Hapus">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            const classCounts = { "PSO A": 0, "PSO B": 0, "PSO C": 0, "PSO D": 0, "PSO E": 0 };
+            responses.forEach(r => { if (classCounts[r.class] !== undefined) classCounts[r.class]++; });
+
+            renderCharts(scores, classCounts);
+            lucide.createIcons();
+        }
+
+        function renderCharts(scores, classCounts) {
+            const ctx1 = document.getElementById("scoreDistChart").getContext("2d");
+            if (scoreChart) scoreChart.destroy();
+            scoreChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['0-50', '51-70', '71-85', '86-100'],
+                    datasets: [{ label: 'Jumlah Praktikan', data: [scores.filter(s => s <= 50).length, scores.filter(s => s > 50 && s <= 70).length, scores.filter(s => s > 70 && s <= 85).length, scores.filter(s => s > 85).length], backgroundColor: '#818cf8' }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+
+            const ctx2 = document.getElementById("classDistChart").getContext("2d");
+            if (classChart) classChart.destroy();
+            classChart = new Chart(ctx2, {
+                type: 'pie',
+                data: { labels: Object.keys(classCounts), datasets: [{ data: Object.values(classCounts), backgroundColor: ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#8b5cf6'] }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        // Fungsi Export Excel Profesional Menggunakan SheetJS (.xlsx)
+        function exportCSV() {
+            if (filteredResponses.length === 0) return alert("Belum ada data respon untuk diexport!");
+
+            const selectedClass = document.getElementById("filterClassSelect").value;
+
+            // Mapping data agar rapi di Excel
+            const excelData = filteredResponses.map((r, idx) => ({
+                "No": idx + 1,
+                "Waktu Submit": new Date(r.created_at).toLocaleString("id-ID"),
+                "Nama Praktikan": r.name,
+                "NPM": String(r.npm), // Pakai String agar format NPM aman tidak berubah jadi angka ilmiah
+                "Kelas": r.class,
+                "Nilai Akhir": r.score,
+                "Status": r.score >= 70 ? "LULUS" : "REMIDIAL"
+            }));
+
+            // Buat Workbook & Worksheet
+            const worksheet = XLSX.utils.json_to_sheet(excelData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Rekap Pretest");
+
+            // Lebar kolom otomatis agar tidak terpotong
+            worksheet["!cols"] = [
+                { wch: 6 },  // No
+                { wch: 22 }, // Waktu Submit
+                { wch: 30 }, // Nama Praktikan
+                { wch: 16 }, // NPM
+                { wch: 12 }, // Kelas
+                { wch: 12 }, // Nilai Akhir
+                { wch: 12 }  // Status
+            ];
+
+            // Simpan File Excel .xlsx
+            const filename = `Rekap_Pretest_PSO_Judul1_${selectedClass.replace(/\s+/g, '_')}.xlsx`;
+            XLSX.writeFile(workbook, filename);
+        }
+
+        async function clearAllResponses() {
+            if (confirm("Hapus seluruh respon praktikan dari server Supabase?")) {
+                try {
+                    const { error } = await _supabase
+                        .from('pretest_responses')
+                        .delete()
+                        .neq('id', 0);
+                    if (error) throw error;
+                    fetchSupabaseResponses();
+                } catch (err) {
+                    alert("Gagal menghapus data: " + err.message);
+                }
+            }
+        }
+
+        async function deleteSingleResponse(id) {
+            if (confirm("Hapus baris respon ini?")) {
+                try {
+                    const { error } = await _supabase
+                        .from('pretest_responses')
+                        .delete()
+                        .eq('id', id);
+                    if (error) throw error;
+                    fetchSupabaseResponses();
+                } catch (err) {
+                    alert("Gagal menghapus: " + err.message);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
